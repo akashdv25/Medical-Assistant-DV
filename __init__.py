@@ -1,0 +1,4 @@
+"""
+Medical Assistant RaG package
+
+""" 
