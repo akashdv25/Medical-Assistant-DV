@@ -7,6 +7,7 @@ from langchain_cerebras import ChatCerebras
 from langchain_core.messages import SystemMessage, HumanMessage
 from langchain_core.documents import Document
 
+
 load_dotenv()
 
 class MedicalLLM:
@@ -24,7 +25,7 @@ class MedicalLLM:
             temperature=temperature,
             api_key=os.getenv("CEREBRAS_API_KEY"),
         )
-        
+
         # Define the system prompt template
         self.system_prompt = """You are an advanced RAG-based medical advisor. Your responses must be:
                                 1. Based ONLY on the provided medical document context
@@ -53,7 +54,7 @@ class MedicalLLM:
         # Format context and track sources
         context = "\n\nRelevant Medical Documents:\n"
         source_details = {}
-        
+
         for i, doc in enumerate(context_docs, 1):
             source_path = doc.metadata.get('source', 'Unknown')
             source_details[f"Document {i}"] = source_path
@@ -65,14 +66,20 @@ class MedicalLLM:
             HumanMessage(content=f"Context: {context}\n\nQuery: {query}\n\nRemember to cite sources as [Doc X]")
         ]
         
-        # Get LLM response
-        response = self.llm.invoke(messages)
-        
-        return {
-            "response": response.content,
-            "source_details": source_details,
-            "total_sources": len(context_docs)
-        }
+        try:
+            # Get LLM response
+            response = self.llm.invoke(messages)
+            
+
+            
+            return {
+                "response": response.content,
+                "source_details": source_details,
+                "total_sources": len(context_docs)
+            }
+        except Exception as e:
+            self.logger.log_system("error", f"Error processing query: {str(e)}")
+            raise
     
 
     

@@ -1,7 +1,10 @@
 import streamlit as st
-from src.document_vector_retrieval.topk_docs import TopKRetriever
-from src.initialize_llm.load_llm import MedicalLLM
+from src.document_vector_retrieval import TopKRetriever
+from src.initialize_llm import MedicalLLM
+from src.logging import Logger
 import os
+import time
+
 
 
 # Set page config
@@ -10,6 +13,9 @@ st.set_page_config(
     page_icon="🏥",
     layout="wide"
 )
+# Initialize logger
+logger = Logger()
+
 
 # Sidebar for file upload
 with st.sidebar:
@@ -145,6 +151,7 @@ with col2:
 if st.button("Get Answer"):
     if query:
         try:
+            
             # Create columns for showing progress
             progress_col1, progress_col2 = st.columns(2)
             
@@ -174,9 +181,13 @@ if st.button("Get Answer"):
                 with st.spinner("🤔 Analyzing documents and generating response..."):
                     result = medical_llm.get_response(query=query, context_docs=relevant_docs)
             
+
             # Display results in expandable sections
             st.markdown("### 📝 Medical Response")
             st.write(result["response"])
+
+            # Log only after successful display of response
+            logger.log_query(f"Query: {query}")
             
             # Show sources in an expander
             with st.expander("📚 View Source Documents"):
