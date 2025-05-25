@@ -27,7 +27,7 @@ This project implements a medical document management system that uses RAG archi
   - Real-time document display
   - Interactive query interface
 
-[](img/streamlit.png)
+![image](img/streamlit.png)
 
 
 
